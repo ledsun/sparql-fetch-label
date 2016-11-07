@@ -3,9 +3,21 @@ const pify = require('superagent-promise')
 
 const request = pify(superagent, Promise)
 
-module.exports = function(endpoint, url, proxy) {
+module.exports = function() {
+  const cache = new Map()
+
+  return function(endpoint, url, proxy) {
+    if (cache.has(`${endpoint}:${url}`)) {
+      return Promise.resolve(cache.get(`${endpoint}:${url}`))
+    }
+
+    return fetch(endpoint, url, proxy, cache)
+  }
+}
+
+function fetch(endpoint, url, proxy, cache) {
   const query = `select ?label where { <${url}>  rdfs:label ?label }`
-  // encodeURI does not encode #.
+    // encodeURI does not encode #.
   let requestUrl = `${endpoint}?query=${encodeURIComponent(query) }`
 
   if (proxy) {
@@ -19,7 +31,11 @@ module.exports = function(endpoint, url, proxy) {
     .then((res) => res.body)
     .then((result) => {
       if (result.results.bindings[0]) {
-        return result.results.bindings[0].label.value
+        const label = result.results.bindings[0].label.value
+
+        // Cache result
+        cache.set(`${endpoint}:${url}`, label)
+        return label
       }
     })
 }
