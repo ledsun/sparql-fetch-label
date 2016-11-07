@@ -5,17 +5,22 @@ const request = pify(superagent, Promise)
 
 module.exports = function() {
   const cache = new Map()
+  const withoutLabel = new Set()
 
   return function(endpoint, url, proxy) {
     if (cache.has(`${endpoint}:${url}`)) {
       return Promise.resolve(cache.get(`${endpoint}:${url}`))
     }
 
-    return fetch(endpoint, url, proxy, cache)
+    if (withoutLabel.has(`${endpoint}:${url}`)) {
+      return Promise.resolve()
+    }
+
+    return fetch(endpoint, url, proxy, cache, withoutLabel)
   }
 }
 
-function fetch(endpoint, url, proxy, cache) {
+function fetch(endpoint, url, proxy, cache, withoutLabel) {
   const query = `select ?label where { <${url}>  rdfs:label ?label }`
     // encodeURI does not encode #.
   let requestUrl = `${endpoint}?query=${encodeURIComponent(query) }`
@@ -37,5 +42,7 @@ function fetch(endpoint, url, proxy, cache) {
         cache.set(`${endpoint}:${url}`, label)
         return label
       }
+
+      withoutLabel.add(`${endpoint}:${url}`)
     })
 }
