@@ -3,10 +3,14 @@ const pify = require('superagent-promise')
 
 const request = pify(superagent, Promise)
 
-module.exports = function(endpoint, url) {
-  const query = `select ?label where { <${url}>  rdfs:label ?label }`,
-    // encodeURI does not encode #.
-    requestUrl = `${endpoint}?query=${encodeURIComponent(query) }`
+module.exports = function(endpoint, url, proxy) {
+  const query = `select ?label where { <${url}>  rdfs:label ?label }`
+  // encodeURI does not encode #.
+  let requestUrl = `${endpoint}?query=${encodeURIComponent(query) }`
+
+  if (proxy) {
+    requestUrl = `${proxy}?endpoint=${endpoint}&query=${encodeURIComponent(query)}`
+  }
 
   return request
     .get(requestUrl)
