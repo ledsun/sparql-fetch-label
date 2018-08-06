@@ -1,7 +1,7 @@
 {
   "name": "sparql-fetch-label",
   "description": "Fetch the label of the url from sparql end points",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "ledsun",
   "bugs": {
     "url": "https://github.com/ledsun/sparql-fetch-label/issues"
