@@ -7,7 +7,7 @@
     "url": "https://github.com/ledsun/sparql-fetch-label/issues"
   },
   "dependencies": {
-    "superagent": "^2.3.0",
+    "superagent": "^3.8.3",
     "superagent-promise": "^1.1.0"
   },
   "homepage": "https://github.com/ledsun/sparql-fetch-label",
