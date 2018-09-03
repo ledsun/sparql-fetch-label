@@ -31,7 +31,7 @@ function fetch(endpoint, url, proxy, cache, withoutLabel) {
 
   return request
     .get(requestUrl)
-    .set('Accept', 'application/json')
+    .set('Accept', 'application/sparql-results+json')
     .end()
     .then((res) => res.body)
     .then((result) => {
